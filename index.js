@@ -61,4 +61,28 @@ server.get('/api/users/', restricted, (req, res) => {
   });
 });
 
+function restricted(req, res, next) {
+ const { username, password } = req.headers;
+ //  console.log('{username, password}', { username, password }); // { username: 'name', password: 'pass'}
+ //  console.log('username, password', username, password); // name pass
+ //  console.log('{username}', { username }); // { username: 'name' }
+ if (username && password) {
+  Users.findBy({ username })
+   .first()
+   .then(user => {
+    // console.log('passwords: ', req.headers.password, user.password);
+    if (user && bcrypt.compareSync(req.headers.password, user.password)) {
+     next();
+    } else {
+     res.status(401).json({ message: 'You shall not pass!' });
+    }
+   })
+   .catch(err => {
+    res.status(500).json(err);
+   });
+ } else {
+  res.status(401).json({ message: 'Please provide credentials' });
+ }
+}
+
 server.listen(5000, () => console.log('App is running on port 5000'));
