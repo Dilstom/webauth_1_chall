@@ -10,8 +10,8 @@ server.use(helmet());
 server.use(express.json());
 server.use(cors());
 
-server.get('/api/users/', (req, res) => {
- Users.find()
+server.get('/api/users/:id', restricted, (req, res) => {
+ Users.findById(req.params.id)
   .then(saved => {
    res.status(201).json(saved);
   })
