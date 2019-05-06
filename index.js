@@ -20,8 +20,12 @@ server.get('/api/users/', (req, res) => {
   });
 });
 
-server.get('/api/users/:id', (req, res) => {
- Users.findById(req.params.id)
+server.post('/api/register', (req, res) => {
+ const user = req.body;
+ const hash = bcrypt.hashSync(user.password, 8);
+ user.password = hash;
+
+ Users.add(user)
   .then(saved => {
    res.status(201).json(saved);
   })
