@@ -30,4 +30,18 @@ server.get('/api/users/:id', (req, res) => {
   });
 });
 
+server.post('/api/register', (req, res) => {
+ const user = req.body;
+ const hash = bcrypt.hashSync(user.password, 8);
+ user.password = hash;
+
+ Users.add(user)
+  .then(saved => {
+   res.status(201).json(saved);
+  })
+  .catch(err => {
+   res.status(500).json(err);
+  });
+});
+
 server.listen(5000, () => console.log('App is running on port 5000'));
