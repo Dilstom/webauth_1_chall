@@ -19,4 +19,15 @@ server.get('/api/users/', (req, res) => {
    res.status(500).json(err);
   });
 });
+
+server.get('/api/users/:id', (req, res) => {
+ Users.findById(req.params.id)
+  .then(saved => {
+   res.status(201).json(saved);
+  })
+  .catch(err => {
+   res.status(500).json(err);
+  });
+});
+
 server.listen(5000, () => console.log('App is running on port 5000'));
