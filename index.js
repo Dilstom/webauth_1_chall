@@ -51,7 +51,8 @@ server.post('/api/login', (req, res) => {
   });
 });
 
- Users.add(user)
+server.get('/api/users/', restricted, (req, res) => {
+ Users.find()
   .then(saved => {
    res.status(201).json(saved);
   })
