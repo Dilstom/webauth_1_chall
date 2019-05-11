@@ -79,26 +79,12 @@ server.get('/api/users/', restricted, (req, res) => {
 });
 
 function restricted(req, res, next) {
- const { username, password } = req.headers;
- //  console.log('{username, password}', { username, password }); // { username: 'name', password: 'pass'}
- //  console.log('username, password', username, password); // name pass
- //  console.log('{username}', { username }); // { username: 'name' }
- if (username && password) {
-  Users.findBy({ username })
-   .first()
-   .then(user => {
-    // console.log('passwords: ', req.headers.password, user.password);
-    if (user && bcrypt.compareSync(req.headers.password, user.password)) {
+ if (req.session && req.session.user) {
      next();
     } else {
-     res.status(401).json({ message: 'You shall not pass!' });
-    }
-   })
-   .catch(err => {
-    res.status(500).json(err);
-   });
- } else {
-  res.status(401).json({ message: 'Please provide credentials' });
+  res
+   .status(401)
+   .json({ message: 'You shall not pass! You are not authenticated!' });
  }
 }
 
