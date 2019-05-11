@@ -80,12 +80,11 @@ server.get('/api/users/', restricted, (req, res) => {
 
 function restricted(req, res, next) {
  if (req.session && req.session.user) {
-     next();
-    } else {
+  next();
+ } else {
   res
    .status(401)
    .json({ message: 'You shall not pass! You are not authenticated!' });
  }
 }
-
 server.listen(5000, () => console.log('App is running on port 5000'));
