@@ -11,6 +11,18 @@ server.use(helmet());
 server.use(express.json());
 server.use(cors());
 
+const sessionConfig = {
+ name: 'donkey',
+ secret: 'keep it secret',
+ cookie: {
+  maxAge: 1000 * 60 * 10,
+  secure: false,
+  httpOnly: true,
+ },
+ resave: false,
+ saveUninitialized: false,
+};
+
 server.get('/api/users/:id', restricted, (req, res) => {
  Users.findById(req.params.id)
   .then(saved => {
