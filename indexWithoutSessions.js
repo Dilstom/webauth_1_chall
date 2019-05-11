@@ -2,7 +2,6 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const session = require('express-session');
 
 const Users = require('./users/users_model');
 
@@ -10,20 +9,6 @@ const server = express();
 server.use(helmet());
 server.use(express.json());
 server.use(cors());
-
-const sessionConfig = {
- name: 'donkey',
- secret: 'keep it secret',
- cookie: {
-  maxAge: 1000 * 60 * 10,
-  secure: false,
-  httpOnly: true,
- },
- resave: false,
- saveUninitialized: false,
-};
-
-server.use(session(sessionConfig));
 
 server.get('/api/users/:id', restricted, (req, res) => {
  Users.findById(req.params.id)
@@ -56,8 +41,6 @@ server.post('/api/login', (req, res) => {
   .first()
   .then(user => {
    if (user && bcrypt.compareSync(password, user.password)) {
-    req.session.user = user;
-    // console.log(req.session.user) => // { id: 13, username: 'john8', password: '$IiudrqstEHMDbET/t1DfE3qy1EPrM1.8X2a$08$JK7dnCauj4dD.lgOlI9.' };
     res.status(200).json({ message: `Welcome ${user.username}` });
    } else {
     res.status(401).json({ message: 'Invalid Credentials' });
@@ -79,12 +62,25 @@ server.get('/api/users/', restricted, (req, res) => {
 });
 
 function restricted(req, res, next) {
- if (req.session && req.session.user) {
-  next();
+ const { username, password } = req.headers;
+ console.log(req.headers);
+ if (username && password) {
+  Users.findBy({ username })
+   .first()
+   .then(user => {
+    // console.log('passwords: ', req.headers.password, user.password);
+    if (user && bcrypt.compareSync(req.headers.password, user.password)) {
+     next();
+    } else {
+     res.status(401).json({ message: 'You shall not pass!' });
+    }
+   })
+   .catch(err => {
+    res.status(500).json(err);
+   });
  } else {
-  res
-   .status(401)
-   .json({ message: 'You shall not pass! You are not authenticated!' });
+  res.status(401).json({ message: 'Please provide credentials' });
  }
 }
+
 server.listen(5000, () => console.log('App is running on port 5000'));
