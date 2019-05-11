@@ -24,6 +24,13 @@ const sessionConfig = {
  },
  resave: false,
  saveUninitialized: false,
+ store: new KnexSessionStore({
+  knex: db,
+  tablename: 'session',
+  sidfieldname: 'sid',
+  createtable: true,
+  clearInterval: 1000 * 60 * 60,
+ }),
 };
 
 server.use(session(sessionConfig));
