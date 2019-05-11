@@ -56,6 +56,8 @@ server.post('/api/login', (req, res) => {
   .first()
   .then(user => {
    if (user && bcrypt.compareSync(password, user.password)) {
+    req.session.user = user;
+    // console.log(req.session.user) => // { id: 13, username: 'john8', password: '$IiudrqstEHMDbET/t1DfE3qy1EPrM1.8X2a$08$JK7dnCauj4dD.lgOlI9.' };
     res.status(200).json({ message: `Welcome ${user.username}` });
    } else {
     res.status(401).json({ message: 'Invalid Credentials' });
