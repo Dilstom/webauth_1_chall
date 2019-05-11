@@ -4,6 +4,9 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 
+const KnexSessionStore = require('connect-session-knex')(session);
+const db = require('./database/dbConfig');
+
 const Users = require('./users/users_model');
 
 const server = express();
