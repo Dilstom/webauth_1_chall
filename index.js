@@ -23,6 +23,8 @@ const sessionConfig = {
  saveUninitialized: false,
 };
 
+server.use(session(sessionConfig));
+
 server.get('/api/users/:id', restricted, (req, res) => {
  Users.findById(req.params.id)
   .then(saved => {
