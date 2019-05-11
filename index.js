@@ -78,6 +78,20 @@ server.get('/api/users/', restricted, (req, res) => {
   });
 });
 
+server.get('/api/logout', (req, res) => {
+ if (req.session) {
+  req.session.destroy(err => {
+   if (err) {
+    res.send('you cannot leave');
+   } else {
+    res.send('Bye, thanks for playing');
+   }
+  });
+ } else {
+  res.end();
+ }
+});
+
 function restricted(req, res, next) {
  if (req.session && req.session.user) {
   next();
